@@ -1,4 +1,11 @@
 ---
+#This Ansible playbook written to create a VPC newly with two subnets and two route tables for public and private network respectively in us-east-1 region. I have used AWS_ACCESS_KEY and AWS_SECRET_KEY within my user profile, so not used here due to security concern.
+#We have declared some variables to call across the playbooks, change the below values based on your requirement.
+#    my_region: us-east-1
+#    cidr_value: 10.0.0.0/16
+#    internet_gw: yes
+#    vpc_name: ebay_demo_vpc
+
 - hosts: localhost
   gather_facts: no
   vars:
