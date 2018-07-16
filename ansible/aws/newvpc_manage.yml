@@ -1,0 +1,80 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars:
+   my_region: us-east-1
+   cidr_value: 10.0.0.0/16
+   internet_gw: yes
+   vpc_name: ebay_demo_vpc
+
+
+  tasks:
+  - name: Create VPC
+    ec2_vpc:
+     cidr_block: "{{ cidr_value }}"
+     region: "{{ my_region }}"
+     state: present
+     internet_gateway: "{{ internet_gw }}"
+     resource_tags:
+      Name: "{{ vpc_name }}"
+     subnets:
+     - cidr: 10.0.1.0/24
+       resource_tags: {"Name":"Public Subnet" }
+     - cidr: 10.0.2.0/24
+       resource_tags: {"Name":"Private Subnet" }
+    register: vpc_creation
+    tags: create
+
+  - name: Update Custom Internet Gateway Name
+    ec2_vpc_igw:
+     vpc_id: "{{ vpc_creation.vpc_id }}"
+     region: "{{ my_region }}"
+     state: present
+     tags:
+      Name: my_igw
+    register: ig_op
+    tags: create   
+
+  - name: Gather default Route Table facts
+    ec2_vpc_route_table_facts:
+     region: "{{ my_region }}"
+     filters:
+      vpc-id: "{{ vpc_creation.vpc.id }}"
+    register: vpc_default_route
+    tags: create
+
+  - name: Updating default route to Public Route Table
+    ec2_vpc_route_table:
+     vpc_id: "{{ vpc_creation.vpc_id }}"
+     region: "{{ my_region }}"
+     route_table_id: "{{ vpc_default_route.route_tables[0].id }}"
+     lookup: id
+     subnets:
+     - 10.0.1.0/24
+     routes:
+     - dest: 0.0.0.0/0
+       gateway_id: "{{ ig_op.gateway_id }}"
+     tags:
+      Name: Public-RT
+     state: present
+    tags: create
+
+  - name: Setting up Private Route Table
+    ec2_vpc_route_table:
+     vpc_id: "{{ vpc_creation.vpc_id }}"
+     region: "{{ my_region }}"
+     subnets:
+     - 10.0.2.0/24
+     tags:
+      Name: Private-RT
+     state: present
+    tags: create
+
+
+  - name: Delete VPC
+    ec2_vpc:
+     resource_tags: { "Name":"{{ vpc_name }}" }
+     region: "{{ my_region }}"
+     cidr_block: "{{ cidr_value }}"
+     state: absent
+    tags: delete
