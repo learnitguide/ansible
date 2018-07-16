@@ -2,15 +2,11 @@
 - hosts: localhost
   gather_facts: no
   vars:
-   access_key_ID : AKIAIIUNKH7OG3VG6WAQ
-   secret_access_key : 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
    volname: test_data
    vol_id: vol-xxxxxxxx
   tasks:
   - name: Create EC2 instances
     ec2_vol:
-     aws_access_key: "{{ access_key_ID }}"
-     aws_secret_key: "{{ secret_access_key }}"
      zone: us-east-1a
      region: us-east-1
      name: "{{ volname }}"

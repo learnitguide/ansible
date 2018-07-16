@@ -2,15 +2,11 @@
 - hosts: localhost
   gather_facts: no
   vars:
-   access_key_ID : AKIAIIUNKH7OG3VG6WAQ
-   secret_access_key : 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
    volname: test_data
    vol_id: vol-xxxxxxxx
   tasks:
   - name: Create a Data Volume
     ec2_vol:
-     aws_access_key: "{{ access_key_ID }}"
-     aws_secret_key: "{{ secret_access_key }}"
      zone: us-east-1a
      region: us-east-1
      name: "{{ volname }}"
@@ -21,8 +17,6 @@
 
   - name: Attach "{{ volname }}" EBS Volume to Instance.
     ec2_vol:
-     aws_access_key: "{{ access_key_ID }}"
-     aws_secret_key: "{{ secret_access_key }}"
      instance: i-090b77c5dfca2e28d
      name: "{{ volname }}"
      zone: us-east-1a
@@ -32,8 +26,6 @@
 
   - name: Delete a Data Volume
     ec2_vol:
-     aws_access_key: "{{ access_key_ID }}"
-     aws_secret_key: "{{ secret_access_key }}"
      name: "{{ volname }}"
      #zone: us-east-1a
      id: vol-0813dd7aeaf79a975
