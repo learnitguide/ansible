@@ -4,7 +4,7 @@
 #    my_region: us-east-1
 #    cidr_value: 10.0.0.0/16
 #    internet_gw: yes
-#    vpc_name: ebay_demo_vpc
+#    vpc_name: my_demo_vpc
 
 - hosts: localhost
   gather_facts: no
@@ -12,7 +12,7 @@
    my_region: us-east-1
    cidr_value: 10.0.0.0/16
    internet_gw: yes
-   vpc_name: ebay_demo_vpc
+   vpc_name: my_demo_vpc
 
 
   tasks:
